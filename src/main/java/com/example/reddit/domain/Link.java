@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Data
-public class Link extends Auditable{
+public class Link extends Auditable {
 
     @Id
     @GeneratedValue
