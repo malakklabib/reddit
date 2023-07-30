@@ -1,6 +1,6 @@
 package com.example.reddit.config;
 
-import com.example.reddit.domain.User;
+import com.example.reddit.domain.Users;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -10,9 +10,9 @@ public class AuditorAwareImpl implements AuditorAware<String> {
 
     @Override
     public Optional<String> getCurrentAuditor() {
-        if(SecurityContextHolder.getContext().getAuthentication() == null) {
+        if(SecurityContextHolder.getContext().getAuthentication() == null || SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser")) {
             return Optional.of("master@gmail.com");
         }
-        return Optional.of(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail());
+        return Optional.of(((Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail());
     }
 }

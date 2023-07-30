@@ -1,6 +1,6 @@
 package com.example.reddit.security;
 
-import com.example.reddit.domain.User;
+import com.example.reddit.domain.Users;
 import com.example.reddit.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,9 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByEmail(email);
-        if( !user.isPresent() )
+        Optional<Users> user = userRepository.findByEmail(email);
+        if( !user.isPresent() ) {
             throw new UsernameNotFoundException(email);
+        }
         return user.get();
     }
 }

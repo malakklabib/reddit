@@ -1,7 +1,5 @@
 package com.example.reddit.domain;
 
-import com.example.reddit.domain.User;
-
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -25,6 +23,6 @@ public class Role {
     private String name;
 
     @ManyToMany( mappedBy = "roles")
-    private Collection<User> users;
+    private Collection<Users> users;
 
 }
