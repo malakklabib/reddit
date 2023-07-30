@@ -4,7 +4,6 @@ import com.example.reddit.repository.*;
 import com.example.reddit.domain.*;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -17,20 +16,14 @@ public class DatabaseLoader implements CommandLineRunner {
 
     private LinkRepository linkRepository;
     private CommentRepository commentRepository;
-    private RoleRepository roleRepository;
-    private UserRepository userRepository;
 
-    public DatabaseLoader(LinkRepository linkRepository, CommentRepository commentRepository, RoleRepository roleRepository, UserRepository userRepository) {
+    public DatabaseLoader(LinkRepository linkRepository, CommentRepository commentRepository) {
         this.linkRepository = linkRepository;
         this.commentRepository = commentRepository;
-        this.roleRepository = roleRepository;
-        this.userRepository = userRepository;
     }
 
+    @Override
     public void run(String... args) {
-
-        // add users and roles
-        addUsersAndRoles();
 
         Map<String,String> links = new HashMap<>();
         links.put("Securing Spring Boot APIs and SPAs with OAuth 2.0","https://auth0.com/blog/securing-spring-boot-apis-and-spas-with-oauth2/?utm_source=reddit&utm_medium=sc&utm_campaign=springboot_spa_securing");
@@ -44,36 +37,26 @@ public class DatabaseLoader implements CommandLineRunner {
         links.put("Simplest way to Upload and Download Files in Java with Spring Boot - Code to download from Github","https://www.opencodez.com/uncategorized/file-upload-and-download-in-java-spring-boot.htm");
         links.put("Add Social Login to Your Spring Boot 2.0 app","https://developer.okta.com/blog/2018/07/24/social-spring-boot");
         links.put("File download example using Spring REST Controller","https://www.jeejava.com/file-download-example-using-spring-rest-controller/");
+
         links.forEach((k,v) -> {
-            linkRepository.save(new Link(k,v));
+            Link link = new Link(k,v);
+
+            linkRepository.save(link);
+
             // we will do something with comments later
+            Comment spring = new Comment("Thank you for this link related to Spring Boot. I love it, great post!",link);
+            Comment security = new Comment("I love that you're talking about Spring Security",link);
+            Comment pwa = new Comment("What is this Progressive Web App thing all about? PWAs sound really cool.",link);
+            Comment[] comments = {spring,security,pwa};
+            for(Comment comment : comments) {
+                commentRepository.save(comment);
+                link.addComment(comment);
+            }
         });
+
         long linkCount = linkRepository.count();
         System.out.println("Number of links in the database: " + linkCount );
     }
-
-    private void addUsersAndRoles() {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String secret = "{bcrypt}" + encoder.encode("password");
-
-        Role userRole = new Role("ROLE_USER");
-        roleRepository.save(userRole);
-        Role adminRole = new Role("ROLE_ADMIN");
-        roleRepository.save(adminRole);
-
-        User user = new User("user@gmail.com",secret,true);
-        user.addRole(userRole);
-        userRepository.save(user);
-
-        User admin = new User("admin@gmail.com",secret,true);
-        admin.addRole(adminRole);
-        userRepository.save(admin);
-
-        User master = new User("master@gmail.com",secret,true);
-        master.addRoles(new HashSet<>(Arrays.asList(userRole,adminRole)));
-        userRepository.save(master);
-    }
-
 
 
 }

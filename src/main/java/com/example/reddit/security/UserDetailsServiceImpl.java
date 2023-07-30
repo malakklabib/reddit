@@ -1,7 +1,7 @@
-package com.example.reddit.security;
+package com.vega.springit.security;
 
-import com.example.reddit.domain.User;
-import com.example.reddit.repository.UserRepository;
+import com.vega.springit.domain.User;
+import com.vega.springit.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,8 +21,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByEmail(email);
-        if( !user.isPresent() )
+        if( !user.isPresent() ) {
             throw new UsernameNotFoundException(email);
+        }
         return user.get();
     }
 }
