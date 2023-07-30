@@ -2,6 +2,7 @@ package com.example.reddit;
 
 import com.example.reddit.domain.*;
 import com.example.reddit.repository.CommentRepository;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -22,14 +23,9 @@ public class SpringitApplication {
     }
 
     @Bean
-    CommandLineRunner runner(LinkRepository lr, CommentRepository cr){
-        return args -> {
-            Link link = new Link("getting started with spring boot", "https://therealdanvega.com/spring-boot-2");
-            lr.save(link);
-
-            Comment comment = new Comment("this is a comment", link);
-            cr.save(comment);
-            link.addComment(comment);
-        };
+    PrettyTime prettyTime(){
+        return new PrettyTime();
     }
+
+
 }
