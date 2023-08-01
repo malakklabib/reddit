@@ -2,8 +2,7 @@ package com.example.reddit.controller;
 
 import com.example.reddit.domain.Link;
 import com.example.reddit.domain.Vote;
-import com.example.reddit.repository.LinkRepository;
-import com.example.reddit.repository.VoteRepository;
+import com.example.reddit.service.*;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,25 +12,25 @@ import java.util.Optional;
 
 @RestController
 public class VoteController {
-    private VoteRepository voteRepository;
-    private LinkRepository linkRepository;
+    private VoteService voteService;
+    private LinkService linkService;
 
-    public VoteController(VoteRepository voteRepository, LinkRepository linkRepository){
-        this.voteRepository = voteRepository;
-        this.linkRepository = linkRepository;
+    public VoteController(VoteService voteService, LinkService linkService) {
+        this.voteService = voteService;
+        this.linkService = linkService;
     }
 
     @Secured("ROLE_USER")
     @GetMapping("/vote/link/{linkID}/direction/{direction}/votecount/{voteCount}")
     public int vote(@PathVariable Long linkID, @PathVariable short direction, @PathVariable int voteCount){
-        Optional<Link> link = linkRepository.findById(linkID);
+        Optional<Link> link = linkService.findById(linkID);
         if(link.isPresent()){
             Link l = link.get();
             Vote v = new Vote(direction, l);
-            voteRepository.save(v);
+            voteService.save(v);
             int updatedVoteCount = voteCount + direction;
             l.setVoteCount(updatedVoteCount);
-            linkRepository.save(l);
+            linkService.save(l);
             return updatedVoteCount;
         }
         return voteCount;

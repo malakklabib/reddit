@@ -11,9 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import com.example.reddit.repository.*;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableJpaAuditing
+@EnableTransactionManagement
 public class SpringitApplication {
 
     private static final Logger log = LoggerFactory.getLogger(SpringitApplication.class);
