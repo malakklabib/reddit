@@ -40,6 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .rememberMe()
                 .and()
+                .csrf().disable()
                 .headers().frameOptions().disable();
     }
 

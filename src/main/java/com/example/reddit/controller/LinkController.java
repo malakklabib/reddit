@@ -1,6 +1,7 @@
 package com.example.reddit.controller;
 
 import com.example.reddit.SpringitApplication;
+import com.example.reddit.domain.Comment;
 import com.example.reddit.domain.Link;
 import com.example.reddit.repository.*;
 import org.slf4j.Logger;
@@ -22,10 +23,11 @@ public class LinkController {
 
     private static final Logger log = LoggerFactory.getLogger(LinkController.class);
     private LinkRepository linkRepository;
+    private CommentRepository commentRepository;
 
-
-    public LinkController(LinkRepository linkRepository){
+    public LinkController(LinkRepository linkRepository, CommentRepository commentRepository) {
         this.linkRepository = linkRepository;
+        this.commentRepository = commentRepository;
     }
 
     @GetMapping("/")
@@ -38,7 +40,11 @@ public class LinkController {
     public String read(@PathVariable Long id, Model model){
         Optional<Link> link = linkRepository.findById(id);
         if(link.isPresent()){
-            model.addAttribute("link", link.get());
+            Link currLink = link.get();
+            Comment c = new Comment();
+            c.setLink(currLink);
+            model.addAttribute("link", currLink);
+            model.addAttribute("comment", c);
             model.addAttribute("success", model.containsAttribute("success"));
             return "link/view";
         }
@@ -65,15 +71,16 @@ public class LinkController {
             return "redirect:/link/{id}";
         }
     }
-//
-//    @PutMapping("/{id}")
-//    public Link update(@ModelAttribute Link link){
-//        return linkRepository.save(link);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public void delete(@PathVariable Long id){
-//        linkRepository.deleteById(id);
-//    }
+
+    @PostMapping("/link/comments")
+    public String addComment(@Valid Comment comment, BindingResult bindingResult){
+        if(bindingResult.hasErrors())
+            log.info("Comment could not be added");
+        else{
+            commentRepository.save(comment);
+            log.info("Comment was added successfully!");
+        }
+        return "redirect:/link/" + comment.getLink().getId();
+    }
 
 }

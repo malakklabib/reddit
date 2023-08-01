@@ -1,5 +1,6 @@
 package com.example.reddit.bootstrap;
 
+import com.example.reddit.domain.Comment;
 import com.example.reddit.domain.Link;
 import com.example.reddit.domain.Role;
 import com.example.reddit.domain.Users;
@@ -51,8 +52,18 @@ public class DatabaseLoader implements CommandLineRunner {
         links.put("File download example using Spring REST Controller","https://www.jeejava.com/file-download-example-using-spring-rest-controller/");
 
         links.forEach((k,v) -> {
-            linkRepository.save(new Link(k,v));
-            // we will do something with comments later
+            Link link = new Link(k,v);
+            linkRepository.save(link);
+
+            Comment spring = new Comment("whatever", link);
+            Comment security = new Comment("forever", link);
+            Comment pwa = new Comment("dc", link);
+            Comment[] comments = {spring,security,pwa};
+            for(Comment c : comments){
+                commentRepository.save(c);
+                link.addComment(c);
+            }
+
         });
 
         long linkCount = linkRepository.count();
