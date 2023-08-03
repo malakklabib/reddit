@@ -23,6 +23,6 @@ public class Role {
     private String name;
 
     @ManyToMany( mappedBy = "roles")
-    private Collection<Users> users;
+    private Collection<User> users;
 
 }
